@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView setPoint;
+    TextView setPoint,processVariable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         final View v = findViewById(R.id.view);
         v.setBackground(new CustomDrawable(getResources().getColor(R.color.grey),getResources().getColor(R.color.blue)));
         setPoint = findViewById(R.id.setPointValue);
+        processVariable = findViewById(R.id.processVariableValue);
+        final ProgressBar bar = findViewById(R.id.progressBar);
 
 
         DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("IoT").child("values");
@@ -38,10 +41,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 DataModel model = dataSnapshot.getValue(DataModel.class);
+                if(bar.getVisibility() == View.VISIBLE){
+                    bar.setVisibility(View.INVISIBLE);
+                }
 
                 int i = 0;
                 if (model != null) {
                     setPoint.setText(String.valueOf(model.getSetpoint()));
+                    processVariable.setText(String.valueOf(model.getProcess_variable()));
                     i = (int)(Float.parseFloat(model.getProcess_variable())*100);
                 }
                 Log.e("value",i+"");
